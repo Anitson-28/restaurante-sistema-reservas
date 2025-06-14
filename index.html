@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurante Delicioso - Sistema de Reservas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #b91c1c, #991b1b);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success {
+            background: #10b981;
+        }
+
+        .notification.error {
+            background: #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .header {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 16px 0;
+            margin-bottom: 32px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer {
+            background: #1f2937;
+            color: white;
+            padding: 48px 0;
+            margin-top: 64px;
+        }
+
+        .info-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body style="background: linear-gradient(135deg, #f3f4f6, #e5e7eb); min-height: 100vh;">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <h1 style="font-size: 24px; font-weight: bold; color: #1f2937;">
+                    🍽️ Restaurante Delicioso
+                </h1>
+                <div style="display: flex; gap: 12px;">
+                    <a href="admin.html" class="btn btn-secondary">
+                        ⚙️ Painel Admin
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- Hero Section -->
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #dc2626, #b91c1c); color: white;">
+            <h1 style="font-size: 36px; font-weight: bold; margin-bottom: 16px;">
+                Bem-vindo ao Restaurante Delicioso
+            </h1>
+            <p style="font-size: 18px; margin-bottom: 24px; opacity: 0.9;">
+                Reserve sua mesa e desfrute de uma experiência gastronômica única
+            </p>
+            <button onclick="document.getElementById('booking-form').scrollIntoView({behavior: 'smooth'})" 
+                    class="btn" style="background: white; color: #dc2626; font-size: 16px;">
+                📅 Fazer Reserva Agora
+            </button>
+        </div>
+
+        <!-- Booking Form -->
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h2 style="font-size: 28px; font-weight: bold; text-align: center; margin-bottom: 32px; color: #1f2937;">
+                Fazer Reserva
+            </h2>
+            
+            <form id="booking-form">
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label">👤 Nome Completo *</label>
+                        <input type="text" class="form-input" name="name" required placeholder="Seu nome completo">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">📧 Email *</label>
+                        <input type="email" class="form-input" name="email" required placeholder="seu@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">📱 Telefone *</label>
+                        <input type="tel" class="form-input" name="phone" required placeholder="(11) 99999-9999">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">👥 Pessoas *</label>
+                        <select class="form-input" name="guests" required>
+                            <option value="">Selecione</option>
+                            <option value="1">1 pessoa</option>
+                            <option value="2">2 pessoas</option>
+                            <option value="3">3 pessoas</option>
+                            <option value="4">4 pessoas</option>
+                            <option value="5">5 pessoas</option>
+                            <option value="6">6 pessoas</option>
+                            <option value="7">7 pessoas</option>
+                            <option value="8">8 pessoas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">📅 Data *</label>
+                        <input type="date" class="form-input" name="date" required id="date-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">🕐 Horário *</label>
+                        <select class="form-input" name="time" required id="time-select">
+                            <option value="">Selecione</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">📝 Observações</label>
+                    <textarea class="form-input" name="notes" rows="3" placeholder="Aniversário, restrições alimentares, preferências especiais..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 18px;">
+                    ✨ Confirmar Reserva
+                </button>
+            </form>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <div class="grid grid-3">
+                <div style="text-align: center;">
+                    <div style="font-size: 32px; margin-bottom: 16px;">📍</div>
+                    <h3 style="font-weight: bold; margin-bottom: 8px;">Localização</h3>
+                    <p style="color: #6b7280;">Rua das Flores, 123<br>Centro - São Paulo</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 32px; margin-bottom: 16px;">📱</div>
+                    <h3 style="font-weight: bold; margin-bottom: 8px;">Contato</h3>
+                    <p style="color: #6b7280;">(11) 9999-9999<br>contato@restaurante.com</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 32px; margin-bottom: 16px;">🕐</div>
+                    <h3 style="font-weight: bold; margin-bottom: 8px;">Funcionamento</h3>
+                    <p style="color: #6b7280;" id="operating-hours">
+                        Seg-Qui: 18h às 23h<br>
+                        Sex-Sáb: 18h às 00h<br>
+                        Dom: 18h às 22h
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="grid grid-3">
+                <div>
+                    <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 16px;">
+                        🍽️ Restaurante Delicioso
+                    </h3>
+                    <p style="color: #d1d5db;">
+                        Experiência gastronômica única com os melhores pratos da culinária internacional.
+                    </p>
+                </div>
+                <div>
+                    <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 16px;">Especialidades</h3>
+                    <ul style="color: #d1d5db; list-style: none;">
+                        <li style="margin-bottom: 8px;">🥩 Carnes Premium</li>
+                        <li style="margin-bottom: 8px;">🍝 Massas Artesanais</li>
+                        <li style="margin-bottom: 8px;">🍷 Vinhos Selecionados</li>
+                        <li>🍰 Sobremesas Exclusivas</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 16px;">Redes Sociais</h3>
+                    <div style="color: #d1d5db;">
+                        <p style="margin-bottom: 8px;">📘 Facebook: /restaurantedelicioso</p>
+                        <p style="margin-bottom: 8px;">📷 Instagram: @restaurantedelicioso</p>
+                        <p>🐦 Twitter: @restdelicioso</p>
+                    </div>
+                </div>
+            </div>
+            <div style="border-top: 1px solid #374151; padding-top: 24px; margin-top: 32px; text-align: center;">
+                <p style="color: #d1d5db;">
+                    © 2024 Restaurante Delicioso. Todos os direitos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sistema de configurações
+        let config = JSON.parse(localStorage.getItem('restaurant_config') || JSON.stringify({
+            totalCapacity: 50,
+            totalTables: 12,
+            regularHours: {
+                monday: { open: '18:00', close: '23:00' },
+                tuesday: { open: '18:00', close: '23:00' },
+                wednesday: { open: '18:00', close: '23:00' },
+                thursday: { open: '18:00', close: '23:00' },
+                friday: { open: '18:00', close: '00:00' },
+                saturday: { open: '18:00', close: '00:00' },
+                sunday: { open: '18:00', close: '22:00' }
+            },
+            specialHours: []
+        }));
+
+        // Reservas
+        let reservations = JSON.parse(localStorage.getItem('reservations') || '[]');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date-input').min = today;
+            loadTimeSlots();
+            updateOperatingHours();
+        });
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 4000);
+        }
+
+        // Load time slots based on day
+        function loadTimeSlots() {
+            const dateInput = document.getElementById('date-input');
+            const timeSelect = document.getElementById('time-select');
+            
+            dateInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                const dayOfWeek = selectedDate.getDay();
+                const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                const dayName = dayNames[dayOfWeek];
+                
+                // Clear existing options
+                timeSelect.innerHTML = '<option value="">Selecione</option>';
+                
+                if (config.regularHours[dayName]) {
+                    const openTime = config.regularHours[dayName].open;
+                    const closeTime = config.regularHours[dayName].close;
+                    
+                    const timeSlots = generateTimeSlots(openTime, closeTime);
+                    timeSlots.forEach(time => {
+                        const option = document.createElement('option');
+                        option.value = time;
+                        option.textContent = time;
+                        timeSelect.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        // Generate time slots
+        function generateTimeSlots(openTime, closeTime) {
+            const slots = [];
+            let current = new Date(`2000-01-01 ${openTime}`);
+            const end = new Date(`2000-01-01 ${closeTime}`);
+            
+            // If close time is after midnight, add a day
+            if (end < current) {
+                end.setDate(end.getDate() + 1);
+            }
+            
+            while (current < end) {
+                slots.push(current.toTimeString().substring(0, 5));
+                current.setMinutes(current.getMinutes() + 30);
+            }
+            
+            return slots;
+        }
+
+        // Update operating hours display
+        function updateOperatingHours() {
+            const hoursElement = document.getElementById('operating-hours');
+            const hours = config.regularHours;
+            
+            const weekdays = `Seg-Qui: ${hours.monday.open} às ${hours.monday.close}`;
+            const weekends = `Sex-Sáb: ${hours.friday.open} às ${hours.friday.close}`;
+            const sunday = `Dom: ${hours.sunday.open} às ${hours.sunday.close}`;
+            
+            hoursElement.innerHTML = `${weekdays}<br>${weekends}<br>${sunday}`;
+        }
+
+        // Handle form submission
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            // Check capacity
+            const selectedDate = formData.get('date');
+            const selectedTime = formData.get('time');
+            const requestedGuests = parseInt(formData.get('guests'));
+            
+            // Count existing reservations for this date/time
+            const existingReservations = reservations.filter(res => 
+                res.date === selectedDate && res.time === selectedTime && res.status === 'confirmed'
+            );
+            
+            const totalExistingGuests = existingReservations.reduce((sum, res) => sum + parseInt(res.guests), 0);
+            
+            if (totalExistingGuests + requestedGuests > config.totalCapacity) {
+                showNotification('Desculpe, não temos capacidade suficiente para este horário. Tente outro horário.', 'error');
+                return;
+            }
+            
+            const reservation = {
+                id: Date.now(),
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                date: formData.get('date'),
+                time: formData.get('time'),
+                guests: formData.get('guests'),
+                notes: formData.get('notes') || '',
+                origin: 'site',
+                status: 'confirmed',
+                created: new Date().toISOString()
+            };
+            
+            reservations.push(reservation);
+            localStorage.setItem('reservations', JSON.stringify(reservations));
+            
+            this.reset();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date-input').min = today;
+            document.getElementById('time-select').innerHTML = '<option value="">Selecione</option>';
+            
+            showNotification(`🎉 Reserva confirmada para ${reservation.name}! Aguardamos você em ${new Date(reservation.date).toLocaleDateString('pt-BR')} às ${reservation.time}.`);
+        });
+    </script>
+</body>
+</html>
