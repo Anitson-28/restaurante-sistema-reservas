@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Restaurante Delicioso</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-blue {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+
+        .nav-tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            color: #dc2626;
+            border-bottom-color: #dc2626;
+        }
+
+        .reservation-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            background: white;
+            position: relative;
+        }
+
+        .reservation-card.confirmed {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .reservation-card.cancelled {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            position: absolute;
+            top: 16px;
+            right: 16px;
+        }
+
+        .status-confirmed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .origin-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        .origin-site {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .origin-phone {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .origin-whatsapp {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .origin-email {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .origin-presencial {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .hidden { display: none !important; }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success { background: #10b981; }
+        .notification.error { background: #ef4444; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .filters-bar {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .quick-actions {
+            background: #f0f9ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #bae6fd;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .nav-tabs { flex-wrap: wrap; }
+            .reservation-card { padding: 16px; }
+            .status-badge { position: static; margin-bottom: 12px; }
+        }
+    </style>
+</head>
+<body style="background: linear-gradient(135deg, #f1f5f9, #e2e8f0); min-height: 100vh;">
+
+    <!-- Header -->
+    <header style="background: white; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 16px 0; margin-bottom: 32px;">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <h1 style="font-size: 24px; font-weight: bold; color: #1f2937;">
+                    ⚙️ Painel Administrativo - Restaurante Delicioso
+                </h1>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <a href="index.html" class="btn btn-secondary">🏠 Voltar ao Site</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-4" style="margin-bottom: 32px;">
+            <div class="stat-card">
+                <div style="font-size: 32px; margin-bottom: 8px; color: #dc2626;">📊</div>
+                <h3 style="font-size: 24px; font-weight: bold; color: #1f2937;" id="total-reservations">0</h3>
+                <p style="color: #6b7280; font-weight: 500;">Total de Reservas</p>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 32px; margin-bottom: 8px; color: #10b981;">👥</div>
+                <h3 style="font-size: 24px; font-weight: bold; color: #1f2937;" id="total-guests">0</h3>
+                <p style="color: #6b7280; font-weight: 500;">Total de Pessoas</p>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 32px; margin-bottom: 8px; color: #f59e0b;">📅</div>
+                <h3 style="font-size: 24px; font-weight: bold; color: #1f2937;" id="today-reservations">0</h3>
+                <p style="color: #6b7280; font-weight: 500;">Reservas Hoje</p>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 32px; margin-bottom: 8px; color: #8b5cf6;">💼</div>
+                <h3 style="font-size: 24px; font-weight: bold; color: #1f2937;" id="manual-reservations">0</h3>
+                <p style="color: #6b7280; font-weight: 500;">Reservas Manuais</p>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="card">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('nova-reserva')">➕ Nova Reserva</button>
+                <button class="nav-tab" onclick="showTab('lista-reservas')">📋 Lista de Reservas</button>
+                <button class="nav-tab" onclick="showTab('settings')">⚙️ Configurações</button>
+                <button class="nav-tab" onclick="showTab('schedule')">🕐 Horários</button>
+            </div>
+
+            <!-- Nova Reserva Tab -->
+            <div id="nova-reserva-tab" class="tab-content">
+                <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">📱 Reserva Manual (WhatsApp/Telefone)</h2>
+                <p style="color: #6b7280; margin-bottom: 24px;">Use este formulário para inserir reservas feitas via WhatsApp ou telefone:</p>
+                
+                <form id="manual-reservation-form">
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">👤 Nome do Cliente *</label>
+                            <input type="text" class="form-input" name="name" required placeholder="Nome completo do cliente">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">📱 Telefone *</label>
+                            <input type="tel" class="form-input" name="phone" required placeholder="(11) 99999-9999">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">👥 Quantidade de Pessoas *</label>
+                            <select class="form-input" name="guests" required>
+                                <option value="">Selecione</option>
+                                <option value="1">1 pessoa</option>
+                                <option value="2">2 pessoas</option>
+                                <option value="3">3 pessoas</option>
+                                <option value="4">4 pessoas</option>
+                                <option value="5">5 pessoas</option>
+                                <option value="6">6 pessoas</option>
+                                <option value="7">7 pessoas</option>
+                                <option value="8">8 pessoas</option>
+                                <option value="9">9 pessoas</option>
+                                <option value="10">10 pessoas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">📞 Canal de Contato *</label>
+                            <select class="form-input" name="origin" required>
+                                <option value="">Selecione</option>
+                                <option value="whatsapp">WhatsApp</option>
+                                <option value="phone">Telefone</option>
+                                <option value="email">Email</option>
+                                <option value="presencial">Presencial</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">📅 Data *</label>
+                            <input type="date" class="form-input" name="date" required id="manual-date-input">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">🕐 Horário *</label>
+                            <select class="form-input" name="time" required id="manual-time-select">
+                                <option value="">Selecione a data primeiro</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">📧 Email (Opcional)</label>
+                        <input type="email" class="form-input" name="email" placeholder="email@cliente.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">📝 Observações</label>
+                        <textarea class="form-input" name="notes" rows="3" placeholder="Observações especiais, restrições alimentares, etc."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success" style="width: 100%; font-size: 18px;">
+                        ✅ Adicionar Reserva
+                    </button>
+                </form>
+            </div>
+
+            <!-- Lista de Reservas Tab -->
+            <div id="lista-reservas-tab" class="tab-content hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
+                    <h2 style="font-size: 20px; font-weight: bold;">📋 Lista de Reservas</h2>
+                </div>
+
+                <!-- Filters Bar -->
+                <div class="filters-bar">
+                    <h3 style="font-weight: 600; margin-bottom: 16px; color: #374151;">🔍 Filtros</h3>
+                    <div class="grid grid-3">
+                        <div class="form-group">
+                            <label class="form-label">Filtrar por Data:</label>
+                            <input type="date" class="form-input" id="filter-date" onchange="applyFilters()">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Filtrar por Status:</label>
+                            <select class="form-input" id="filter-status" onchange="applyFilters()">
+                                <option value="">Todos</option>
+                                <option value="confirmed">Confirmadas</option>
+                                <option value="cancelled">Canceladas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Filtrar por Origem:</label>
+                            <select class="form-input" id="filter-origin" onchange="applyFilters()">
+                                <option value="">Todas</option>
+                                <option value="site">Site</option>
+                                <option value="whatsapp">WhatsApp</option>
+                                <option value="phone">Telefone</option>
+                                <option value="email">Email</option>
+                                <option value="presencial">Presencial</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 16px;">
+                        <button onclick="clearFilters()" class="btn btn-secondary btn-sm">🔄 Limpar Filtros</button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3 style="font-weight: 600; margin-bottom: 16px; color: #374151;">⚡ Ações Rápidas</h3>
+                    <div class="grid grid-2">
+                        <button onclick="exportReservations()" class="btn btn-blue">📊 Exportar Reservas (.CSV)</button>
+                        <button onclick="clearAllReservations()" class="btn btn-danger">🗑️ Limpar Reservas Antigas</button>
+                    </div>
+                </div>
+                
+                <div id="reservations-container"></div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content hidden">
+                <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">⚙️ Configurações do Sistema</h2>
+                
+                <form id="settings-form">
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label class="form-label">🏢 Capacidade Total (Pessoas)</label>
+                            <input type="number" class="form-input" name="totalCapacity" min="1" max="500" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">🪑 Número Total de Mesas</label>
+                            <input type="number" class="form-input" name="totalTables" min="1" max="100" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">💾 Salvar Configurações</button>
+                </form>
+            </div>
+
+            <!-- Schedule Tab -->
+            <div id="schedule-tab" class="tab-content hidden">
+                <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">🕐 Horários de Funcionamento</h2>
+                
+                <form id="schedule-form">
+                    <div class="grid grid-2">
+                        <div>
+                            <h3 style="font-weight: 600; margin-bottom: 16px; color: #374151;">📅 Horários Regulares</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Segunda a Quinta</label>
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <input type="time" class="form-input" name="weekday_open" style="flex: 1;">
+                                    <span>às</span>
+                                    <input type="time" class="form-input" name="weekday_close" style="flex: 1;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Sexta e Sábado</label>
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <input type="time" class="form-input" name="weekend_open" style="flex: 1;">
+                                    <span>às</span>
+                                    <input type="time" class="form-input" name="weekend_close" style="flex: 1;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Domingo</label>
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <input type="time" class="form-input" name="sunday_open" style="flex: 1;">
+                                    <span>às</span>
+                                    <input type="time" class="form-input" name="sunday_close" style="flex: 1;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 style="font-weight: 600; margin-bottom: 16px; color: #374151;">🎉 Horários Especiais</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Data Especial</label>
+                                <input type="date" class="form-input" name="special_date">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Horário Especial</label>
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <input type="time" class="form-input" name="special_open" style="flex: 1;">
+                                    <span>às</span>
+                                    <input type="time" class="form-input" name="special_close" style="flex: 1;">
+                                </div>
+                            </div>
+                            
+                            <button type="button" onclick="addSpecialHour()" class="btn btn-secondary">➕ Adicionar Horário Especial</button>
+                            
+                            <div id="special-hours-list" style="margin-top: 16px;"></div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">💾 Salvar Horários</button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Global data
+        let reservations = JSON.parse(localStorage.getItem('reservations') || '[]');
+        let filteredReservations = [...reservations];
+        let config = JSON.parse(localStorage.getItem('restaurant_config') || JSON.stringify({
+            totalCapacity: 50,
+            totalTables: 12,
+            regularHours: {
+                monday: { open: '18:00', close: '23:00' },
+                tuesday: { open: '18:00', close: '23:00' },
+                wednesday: { open: '18:00', close: '23:00' },
+                thursday: { open: '18:00', close: '23:00' },
+                friday: { open: '18:00', close: '00:00' },
+                saturday: { open: '18:00', close: '00:00' },
+                sunday: { open: '18:00', close: '22:00' }
+            },
+            specialHours: []
+        }));
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('manual-date-input').min = today;
+            
+            updateStatistics();
+            loadReservations();
+            loadSettings();
+            loadSchedule();
+            setupManualReservationForm();
+        });
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 4000);
+        }
+
+        // Show tab
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            if (tabName === 'lista-reservas') {
+                loadReservations();
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const confirmedReservations = reservations.filter(r => r.status === 'confirmed');
+            const totalReservations = confirmedReservations.length;
+            const totalGuests = confirmedReservations.reduce((sum, r) => sum + parseInt(r.guests), 0);
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayReservations = confirmedReservations.filter(r => r.date === today).length;
+            
+            const manualReservations = confirmedReservations.filter(r => r.origin !== 'site').length;
+            
+            document.getElementById('total-reservations').textContent = totalReservations;
+            document.getElementById('total-guests').textContent = totalGuests;
+            document.getElementById('today-reservations').textContent = todayReservations;
+            document.getElementById('manual-reservations').textContent = manualReservations;
+        }
+
+        // Setup manual reservation form
+        function setupManualReservationForm() {
+            const dateInput = document.getElementById('manual-date-input');
+            const timeSelect = document.getElementById('manual-time-select');
+            
+            dateInput.addEventListener('change', function() {
+                loadManualTimeSlots(this.value);
+            });
+        }
+
+        // Load time slots for manual form
+        function loadManualTimeSlots(selectedDate) {
+            const timeSelect = document.getElementById('manual-time-select');
+            const date = new Date(selectedDate);
+            const dayOfWeek = date.getDay();
+            const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const dayName = dayNames[dayOfWeek];
+            
+            timeSelect.innerHTML = '<option value="">Selecione</option>';
+            
+            if (config.regularHours[dayName]) {
+                const openTime = config.regularHours[dayName].open;
+                const closeTime = config.regularHours[dayName].close;
+                
+                const timeSlots = generateTimeSlots(openTime, closeTime);
+                timeSlots.forEach(time => {
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+                    timeSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Generate time slots
+        function generateTimeSlots(openTime, closeTime) {
+            const slots = [];
+            let current = new Date(`2000-01-01 ${openTime}`);
+            const end = new Date(`2000-01-01 ${closeTime}`);
+            
+            if (end < current) {
+                end.setDate(end.getDate() + 1);
+            }
+            
+            while (current < end) {
+                slots.push(current.toTimeString().substring(0, 5));
+                current.setMinutes(current.getMinutes() + 30);
+            }
+            
+            return slots;
+        }
+
+        // Handle manual reservation form
+        document.getElementById('manual-reservation-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            const selectedDate = formData.get('date');
+            const selectedTime = formData.get('time');
+            const requestedGuests = parseInt(formData.get('guests'));
+            
+            const existingReservations = reservations.filter(res => 
+                res.date === selectedDate && res.time === selectedTime && res.status === 'confirmed'
+            );
+            
+            const totalExistingGuests = existingReservations.reduce((sum, res) => sum + parseInt(res.guests), 0);
+            
+            if (totalExistingGuests + requestedGuests > config.totalCapacity) {
+                showNotification('Capacidade excedida para este horário!', 'error');
+                return;
+            }
+            
+            const reservation = {
+                id: Date.now(),
+                name: formData.get('name'),
+                email: formData.get('email') || '',
+                phone: formData.get('phone'),
+                date: formData.get('date'),
+                time: formData.get('time'),
+                guests: formData.get('guests'),
+                notes: formData.get('notes') || '',
+                origin: formData.get('origin'),
+                status: 'confirmed',
+                created: new Date().toISOString(),
+                createdBy: 'admin'
+            };
+            
+            reservations.push(reservation);
+            localStorage.setItem('reservations', JSON.stringify(reservations));
+            
+            this.reset();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('manual-date-input').min = today;
+            document.getElementById('manual-time-select').innerHTML = '<option value="">Selecione a data primeiro</option>';
+            
+            updateStatistics();
+            showNotification(`Reserva manual criada para ${reservation.name}!`);
+        });
+
+        // Get origin display info
+        function getOriginInfo(origin) {
+            const origins = {
+                'site': { label: '🌐 Site', class: 'origin-site' },
+                'whatsapp': { label: '📱 WhatsApp', class: 'origin-whatsapp' },
+                'phone': { label: '☎️ Telefone', class: 'origin-phone' },
+                'email': { label: '📧 Email', class: 'origin-email' },
+                'presencial': { label: '🏪 Presencial', class: 'origin-presencial' }
+            };
+            return origins[origin] || { label: '🌐 Site', class: 'origin-site' };
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const filterDate = document.getElementById('filter-date').value;
+            const filterStatus = document.getElementById('filter-status').value;
+            const filterOrigin = document.getElementById('filter-origin').value;
+            
+            filteredReservations = reservations.filter(reservation => {
+                let matchDate = true;
+                let matchStatus = true;
+                let matchOrigin = true;
+                
+                if (filterDate) {
+                    matchDate = reservation.date === filterDate;
+                }
+                
+                if (filterStatus) {
+                    matchStatus = reservation.status === filterStatus;
+                }
+                
+                if (filterOrigin) {
+                    const reservationOrigin = reservation.origin || 'site';
+                    matchOrigin = reservationOrigin === filterOrigin;
+                }
+                
+                return matchDate && matchStatus && matchOrigin;
+            });
+            
+            loadReservations();
+        }
+
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('filter-date').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-origin').value = '';
+            filteredReservations = [...reservations];
+            loadReservations();
+        }
+
+        // Export reservations to CSV
+        function exportReservations() {
+            if (reservations.length === 0) {
+                showNotification('Nenhuma reserva para exportar!', 'error');
+                return;
+            }
+            
+            const csvContent = generateCSV(filteredReservations);
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `reservas_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('Arquivo CSV exportado com sucesso!');
+            }
+        }
+
+        // Generate CSV content
+        function generateCSV(data) {
+            const headers = [
+                'ID',
+                'Nome',
+                'Email',
+                'Telefone',
+                'Data',
+                'Horário',
+                'Pessoas',
+                'Origem',
+                'Status',
+                'Observações',
+                'Criado em'
+            ];
+            
+            let csvContent = headers.join(',') + '\n';
+            
+            data.forEach(reservation => {
+                const row = [
+                    reservation.id,
+                    `"${reservation.name}"`,
+                    `"${reservation.email || ''}"`,
+                    `"${reservation.phone}"`,
+                    reservation.date,
+                    reservation.time,
+                    reservation.guests,
+                    reservation.origin || 'site',
+                    reservation.status,
+                    `"${reservation.notes || ''}"`,
+                    new Date(reservation.created).toLocaleString('pt-BR')
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            
+            return csvContent;
+        }
+
+        // Load reservations
+        function loadReservations() {
+            const container = document.getElementById('reservations-container');
+            
+            if (filteredReservations.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 48px 0;">
+                        <div style="font-size: 64px; margin-bottom: 16px;">📋</div>
+                        <h3 style="font-size: 20px; margin-bottom: 16px; color: #6b7280;">
+                            ${reservations.length === 0 ? 'Nenhuma reserva encontrada' : 'Nenhuma reserva corresponde aos filtros'}
+                        </h3>
+                        <p style="color: #9ca3af;">
+                            ${reservations.length === 0 ? 'As reservas aparecerão aqui quando forem criadas.' : 'Tente ajustar os filtros acima.'}
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const sortedReservations = [...filteredReservations].sort((a, b) => {
+                const dateA = new Date(`${a.date} ${a.time}`);
+                const dateB = new Date(`${b.date} ${b.time}`);
+                return dateB - dateA;
+            });
+            
+            let html = '';
+            
+            sortedReservations.forEach(res => {
+                const date = new Date(res.date).toLocaleDateString('pt-BR');
+                const originInfo = getOriginInfo(res.origin || 'site');
+                const cardClass = res.status === 'confirmed' ? 'confirmed' : 'cancelled';
+                const statusClass = res.status === 'confirmed' ? 'status-confirmed' : 'status-cancelled';
+                const statusText = res.status === 'confirmed' ? 'CONFIRMADA' : 'CANCELADA';
+                
+                html += `
+                    <div class="reservation-card ${cardClass}">
+                        <div class="status-badge ${statusClass}">${statusText}</div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">${res.name}</h3>
+                            <span class="origin-badge ${originInfo.class}">${originInfo.label}</span>
+                        </div>
+                        
+                        <div class="grid grid-3" style="margin-bottom: 16px;">
+                            <div>
+                                <p style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">📱 TELEFONE</p>
+                                <p style="font-weight: 500;">${res.phone}</p>
+                            </div>
+                            <div>
+                                <p style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">👥 PESSOAS</p>
+                                <p style="font-weight: 500;">${res.guests}</p>
+                            </div>
+                            <div>
+                                <p style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">📅 DATA</p>
+                                <p style="font-weight: 500;">${date}</p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <p style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">🕐 HORÁRIO</p>
+                            <p style="font-weight: 500;">${res.time}</p>
+                        </div>
+                        
+                        ${res.email ? `
+                            <div style="margin-bottom: 16px;">
+                                <p style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">📧 EMAIL</p>
+                                <p style="font-weight: 500;">${res.email}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${res.notes ? `
+                            <div style="margin-bottom: 16px;">
+                                <p style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">📝 OBSERVAÇÕES</p>
+                                <p style="color: #374151;">${res.notes}</p>
+                            </div>
+                        ` : ''}
+                        
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            ${res.status === 'confirmed' ? `
+                                <button onclick="cancelReservation(${res.id})" class="btn btn-danger btn-sm">❌ Cancelar</button>
+                            ` : `
+                                <button onclick="deleteReservation(${res.id})" class="btn btn-secondary btn-sm">🗑️ Excluir</button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Load settings
+        function loadSettings() {
+            const form = document.getElementById('settings-form');
+            form.totalCapacity.value = config.totalCapacity;
+            form.totalTables.value = config.totalTables;
+        }
+
+        // Load schedule
+        function loadSchedule() {
+            const form = document.getElementById('schedule-form');
+            const hours = config.regularHours;
+            
+            form.weekday_open.value = hours.monday.open;
+            form.weekday_close.value = hours.monday.close;
+            form.weekend_open.value = hours.friday.open;
+            form.weekend_close.value = hours.friday.close;
+            form.sunday_open.value = hours.sunday.open;
+            form.sunday_close.value = hours.sunday.close;
+            
+            updateSpecialHoursList();
+        }
+
+        // Handle settings form
+        document.getElementById('settings-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            config.totalCapacity = parseInt(formData.get('totalCapacity'));
+            config.totalTables = parseInt(formData.get('totalTables'));
+            
+            localStorage.setItem('restaurant_config', JSON.stringify(config));
+            showNotification('Configurações salvas com sucesso!');
+        });
+
+        // Handle schedule form
+        document.getElementById('schedule-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            const weekdayOpen = formData.get('weekday_open');
+            const weekdayClose = formData.get('weekday_close');
+            const weekendOpen = formData.get('weekend_open');
+            const weekendClose = formData.get('weekend_close');
+            const sundayOpen = formData.get('sunday_open');
+            const sundayClose = formData.get('sunday_close');
+            
+            config.regularHours = {
+                monday: { open: weekdayOpen, close: weekdayClose },
+                tuesday: { open: weekdayOpen, close: weekdayClose },
+                wednesday: { open: weekdayOpen, close: weekdayClose },
+                thursday: { open: weekdayOpen, close: weekdayClose },
+                friday: { open: weekendOpen, close: weekendClose },
+                saturday: { open: weekendOpen, close: weekendClose },
+                sunday: { open: sundayOpen, close: sundayClose }
+            };
+            
+            localStorage.setItem('restaurant_config', JSON.stringify(config));
+            showNotification('Horários salvos com sucesso!');
+        });
+
+        // Add special hour
+        function addSpecialHour() {
+            const form = document.getElementById('schedule-form');
+            const date = form.special_date.value;
+            const open = form.special_open.value;
+            const close = form.special_close.value;
+            
+            if (!date || !open || !close) {
+                showNotification('Preencha todos os campos do horário especial!', 'error');
+                return;
+            }
+            
+            const specialHour = {
+                id: Date.now(),
+                date: date,
+                open: open,
+                close: close
+            };
+            
+            config.specialHours.push(specialHour);
+            localStorage.setItem('restaurant_config', JSON.stringify(config));
+            
+            form.special_date.value = '';
+            form.special_open.value = '';
+            form.special_close.value = '';
+            
+            updateSpecialHoursList();
+            showNotification('Horário especial adicionado!');
+        }
+
+        // Update special hours list
+        function updateSpecialHoursList() {
+            const container = document.getElementById('special-hours-list');
+            
+            if (config.specialHours.length === 0) {
+                container.innerHTML = '<p style="color: #6b7280; font-style: italic;">Nenhum horário especial configurado.</p>';
+                return;
+            }
+            
+            let html = '<div style="background: #f9fafb; border-radius: 8px; padding: 16px;">';
+            html += '<h4 style="font-weight: 600; margin-bottom: 12px;">Horários Especiais:</h4>';
+            
+            config.specialHours.forEach(special => {
+                const date = new Date(special.date).toLocaleDateString('pt-BR');
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: white; border-radius: 6px; margin-bottom: 8px;">
+                        <span><strong>${date}</strong> - ${special.open} às ${special.close}</span>
+                        <button onclick="removeSpecialHour(${special.id})" class="btn btn-danger btn-sm">❌</button>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Remove special hour
+        function removeSpecialHour(id) {
+            config.specialHours = config.specialHours.filter(sh => sh.id !== id);
+            localStorage.setItem('restaurant_config', JSON.stringify(config));
+            updateSpecialHoursList();
+            showNotification('Horário especial removido!');
+        }
+
+        // Cancel reservation
+        function cancelReservation(id) {
+            if (confirm('Tem certeza que deseja cancelar esta reserva?')) {
+                reservations = reservations.map(res => 
+                    res.id === id ? { ...res, status: 'cancelled' } : res
+                );
+                localStorage.setItem('reservations', JSON.stringify(reservations));
+                applyFilters();
+                updateStatistics();
+                showNotification('Reserva cancelada com sucesso!');
+            }
+        }
+
+        // Delete reservation
+        function deleteReservation(id) {
+            if (confirm('Tem certeza que deseja excluir esta reserva permanentemente?')) {
+                reservations = reservations.filter(res => res.id !== id);
+                localStorage.setItem('reservations', JSON.stringify(reservations));
+                applyFilters();
+                updateStatistics();
+                showNotification('Reserva excluída com sucesso!');
+            }
+        }
+
+        // Clear all reservations
+        function clearAllReservations() {
+            if (confirm('⚠️ ATENÇÃO: Deseja remover TODAS as reservas? Esta ação não pode ser desfeita!')) {
+                reservations = [];
+                filteredReservations = [];
+                localStorage.setItem('reservations', JSON.stringify(reservations));
+                loadReservations();
+                updateStatistics();
+                showNotification('Todas as reservas foram removidas!');
+            }
+        }
+    </script>
+</body>
+</html>
